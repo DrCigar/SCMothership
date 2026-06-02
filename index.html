@@ -563,12 +563,15 @@
             pointer-events: none;
         }
         #revealGate img {
-            width: 100%;
+            width: auto;
+            max-width: 100%;
+            max-height: 360px;
             border-radius: 10px;
             border: 1px solid var(--border-bright);
             box-shadow: 0 0 24px rgba(232,92,51,0.14);
             transition: box-shadow 0.3s, transform 0.3s;
             display: block;
+            margin: 0 auto;
         }
         #revealGate:hover img {
             box-shadow: 0 0 40px rgba(232,92,51,0.35);
@@ -597,9 +600,18 @@
             from { opacity: 0; transform: translateY(10px); }
             to   { opacity: 1; transform: translateY(0);    }
         }
+        @keyframes tileInDim {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 0.38; transform: translateY(0); }
+        }
         .tile-animate {
             animation: tileIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             pointer-events: auto !important;
+        }
+        .btn-placeholder.tile-animate {
+            animation-name: tileInDim;
+            cursor: not-allowed !important;
+            pointer-events: none !important;
         }
 
         /* ── REPRINT ── */
@@ -768,7 +780,7 @@
             <a href="https://docs.google.com/spreadsheets/d/1XDosix_38hevW4Iw03ncOOuLjXEs0W2pr46gJs2H9po/edit?gid=0#gid=0" target="_blank">
                 <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> Serials DB
             </a>
-            <a href="#" style="opacity:0.45; cursor:not-allowed;" onclick="event.preventDefault();">
+            <a href="#" class="btn-placeholder" onclick="event.preventDefault();">
                 <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> Master Forecast
             </a>
         </div>
