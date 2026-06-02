@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supply Chain Mothership — POS360</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <style>
+        :root {
+            --primary: #E85C33;
+            --primary-dim: rgba(232, 92, 51, 0.12);
+            --primary-glow: rgba(232, 92, 51, 0.35);
+            --hover: #C44E28;
+            --text: #FFFFFF;
+            --gray: #9CA3AF;
+            --card: rgba(8, 12, 14, 0.93);
+            --border: rgba(232, 92, 51, 0.22);
+            --border-bright: rgba(232, 92, 51, 0.55);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #000;
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── CANVAS BACKGROUND ── */
+        #bgCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+        }
+
+        /* ── SCANLINES ── */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0,0,0,0.07) 2px,
+                rgba(0,0,0,0.07) 4px
+            );
+            pointer-events: none;
+            z-index: 9998;
+        }
+
+        /* ── AUTH GATE ── */
+        #authGate {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 500;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: rgba(6, 9, 11, 0.97);
+            border: 1px solid var(--border-bright);
+            border-radius: 12px;
+            padding: 44px 36px 36px;
+            width: 100%;
+            max-width: 360px;
+            box-shadow:
+                0 0 40px rgba(232, 92, 51, 0.12),
+                0 0 100px rgba(232, 92, 51, 0.05),
+                inset 0 0 30px rgba(0,0,0,0.5);
+            text-align: center;
+            position: relative;
+        }
+
+        /* HUD corner brackets */
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: -1px;
+            width: 20px; height: 20px;
+            border-top: 2px solid var(--primary);
+            border-left: 2px solid var(--primary);
+            border-radius: 3px 0 0 0;
+        }
+        .auth-card::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; right: -1px;
+            width: 20px; height: 20px;
+            border-bottom: 2px solid var(--primary);
+            border-right: 2px solid var(--primary);
+            border-radius: 0 0 3px 0;
+        }
+        .auth-corner-tr {
+            position: absolute;
+            top: -1px; right: -1px;
+            width: 20px; height: 20px;
+            border-top: 2px solid var(--primary);
+            border-right: 2px solid var(--primary);
+            border-radius: 0 3px 0 0;
+        }
+        .auth-corner-bl {
+            position: absolute;
+            bottom: -1px; left: -1px;
+            width: 20px; height: 20px;
+            border-bottom: 2px solid var(--primary);
+            border-left: 2px solid var(--primary);
+            border-radius: 0 0 0 3px;
+        }
+
+        .auth-logo {
+            width: 130px;
+            margin: 0 auto 22px;
+            display: block;
+            filter: drop-shadow(0 0 10px rgba(232, 92, 51, 0.3));
+        }
+
+        .auth-title {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            color: var(--primary);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .auth-subtitle {
+            font-size: 9px;
+            letter-spacing: 0.22em;
+            color: #555;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 13px 16px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--primary);
+            font-size: 14px;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 0.2em;
+            text-align: center;
+            outline: none;
+            transition: all 0.25s;
+            margin-bottom: 14px;
+        }
+        .auth-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 16px rgba(232, 92, 51, 0.18);
+        }
+        .auth-input::placeholder { color: #333; letter-spacing: 0.15em; }
+
+        .auth-btn {
+            width: 100%;
+            padding: 13px;
+            background: var(--primary);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .auth-btn:hover {
+            background: var(--hover);
+            box-shadow: 0 0 20px rgba(232, 92, 51, 0.4);
+        }
+
+        .auth-error {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            color: #ff4444;
+            letter-spacing: 0.12em;
+            margin-top: 14px;
+            display: none;
+            animation: blink 0.5s ease-in-out 3;
+        }
+
+        /* ── CHROME TOP BAR ── */
+        #topBar {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 50px;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 18px;
+            background: linear-gradient(180deg,
+                rgba(48, 48, 52, 0.98) 0%,
+                rgba(18, 18, 20, 0.98) 100%
+            );
+            border-bottom: 1px solid rgba(232, 92, 51, 0.5);
+            box-shadow:
+                0 1px 0 rgba(255,255,255,0.04) inset,
+                0 4px 20px rgba(0,0,0,0.6),
+                0 1px 12px rgba(232, 92, 51, 0.15);
+            backdrop-filter: blur(12px);
+        }
+
+        .bar-status {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            min-width: 90px;
+        }
+
+        .bar-title {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: #fff;
+            text-shadow: 0 0 14px rgba(232, 92, 51, 0.5);
+            text-align: center;
+            flex: 1;
+        }
+
+        .bar-clock {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            color: #888;
+            text-align: right;
+            min-width: 90px;
+        }
+
+        /* ── MAIN APP ── */
+        #mainApp {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            padding: 70px 16px 48px;
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+        }
+
+        .status-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #39ff88;
+            box-shadow: 0 0 8px #39ff88, 0 0 16px rgba(57, 255, 136, 0.4);
+            animation: pulse-dot 2.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; box-shadow: 0 0 8px #39ff88; }
+            50% { opacity: 0.35; box-shadow: 0 0 3px #39ff88; }
+        }
+
+        .status-text {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.2em;
+            color: #39ff88;
+            text-transform: uppercase;
+        }
+
+        /* ── WIDGET PANEL ── */
+        .widget {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px 32px 28px;
+            width: 100%;
+            max-width: 980px;
+            box-shadow:
+                0 0 30px rgba(232, 92, 51, 0.06),
+                0 8px 40px rgba(0,0,0,0.6),
+                inset 0 0 20px rgba(0,0,0,0.4);
+            backdrop-filter: blur(14px);
+            position: relative;
+        }
+
+        /* HUD corner brackets on widget */
+        .widget::before {
+            content: '';
+            position: absolute;
+            top: 10px; left: 10px;
+            width: 18px; height: 18px;
+            border-top: 1.5px solid var(--primary);
+            border-left: 1.5px solid var(--primary);
+            border-radius: 2px 0 0 0;
+        }
+        .widget::after {
+            content: '';
+            position: absolute;
+            bottom: 10px; right: 10px;
+            width: 18px; height: 18px;
+            border-bottom: 1.5px solid var(--primary);
+            border-right: 1.5px solid var(--primary);
+            border-radius: 0 0 2px 0;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.32em;
+            color: var(--primary);
+            text-transform: uppercase;
+            margin: 22px 0 13px;
+        }
+        .section-title::before,
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, var(--border-bright), transparent);
+        }
+        .section-title::after {
+            background: linear-gradient(to left, var(--border-bright), transparent);
+        }
+
+        hr { border: 0; height: 1px; background: var(--border); margin: 20px 0; }
+
+        /* ── BUTTONS ── */
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .widget a {
+            background: rgba(232, 92, 51, 0.06);
+            border: 1px solid var(--border);
+            color: #e0e0e0;
+            padding: 14px 12px;
+            border-radius: 7px;
+            font-size: 12.5px;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            height: 54px;
+            transition: all 0.22s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Featured full-width button (KPI hero) */
+        .widget a.btn-featured {
+            grid-column: 1 / -1;
+            height: 70px;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            background: rgba(232, 92, 51, 0.1);
+            border-color: var(--border-bright);
+            box-shadow: 0 0 24px rgba(232,92,51,0.12), inset 0 0 20px rgba(232,92,51,0.04);
+        }
+        .widget a.btn-featured .icon {
+            width: 20px; height: 20px;
+        }
+
+        .widget a::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(232,92,51,0.08), transparent);
+            transition: left 0.45s ease;
+        }
+        .widget a:hover {
+            background: rgba(232, 92, 51, 0.16);
+            border-color: var(--border-bright);
+            color: #fff;
+            box-shadow: 0 0 14px rgba(232, 92, 51, 0.18);
+            transform: translateY(-1px);
+        }
+        .widget a:hover::before { left: 100%; }
+
+        .icon { width: 14px; height: 14px; fill: var(--primary); flex-shrink: 0; }
+
+        /* ── MODALS ── */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.92);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: rgba(6, 9, 11, 0.98);
+            padding: 28px 26px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 390px;
+            border: 1px solid var(--border-bright);
+            box-shadow: 0 0 40px rgba(232, 92, 51, 0.1);
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: -1px;
+            width: 18px; height: 18px;
+            border-top: 1.5px solid var(--primary);
+            border-left: 1.5px solid var(--primary);
+            border-radius: 2px 0 0 0;
+        }
+
+        .modal-title {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 0.25em;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 22px;
+            text-transform: uppercase;
+        }
+
+        .close {
+            float: right;
+            font-size: 22px;
+            cursor: pointer;
+            color: #444;
+            line-height: 1;
+            transition: color 0.2s;
+            position: relative;
+            top: -4px;
+        }
+        .close:hover { color: var(--primary); }
+
+        .form-group { margin-bottom: 13px; }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: rgba(255,255,255,0.03);
+            color: white;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(232, 92, 51, 0.14);
+        }
+        .form-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23E85C33' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 12px;
+            background-color: rgba(255,255,255,0.03);
+        }
+        .form-group select option { background: #080c0e; }
+
+        button[type="submit"] {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 13px;
+            border-radius: 6px;
+            width: 100%;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.2s;
+        }
+        button[type="submit"]:hover {
+            background: var(--hover);
+            box-shadow: 0 0 18px rgba(232, 92, 51, 0.4);
+        }
+
+        /* ── SPINNERS ── */
+        #salSpinner, #loadingSpinner {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.96);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .spinner-ring {
+            width: 64px; height: 64px;
+            border: 2px solid rgba(232, 92, 51, 0.12);
+            border-top: 2px solid var(--primary);
+            border-right: 2px solid rgba(232, 92, 51, 0.4);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+            box-shadow: 0 0 24px rgba(232, 92, 51, 0.25);
+        }
+
+        .spinner-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.3em;
+            color: var(--primary);
+            text-transform: uppercase;
+            animation: blink 1.4s ease-in-out infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+        /* ── REVEAL GATE ── */
+        #revealGate {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 0 20px;
+            transition: opacity 0.45s ease, transform 0.45s ease;
+        }
+        #revealGate.gate-out {
+            opacity: 0;
+            transform: scale(0.96);
+            pointer-events: none;
+        }
+        #revealGate img {
+            width: 100%;
+            border-radius: 10px;
+            border: 1px solid var(--border-bright);
+            box-shadow: 0 0 24px rgba(232,92,51,0.14);
+            transition: box-shadow 0.3s, transform 0.3s;
+            display: block;
+        }
+        #revealGate:hover img {
+            box-shadow: 0 0 40px rgba(232,92,51,0.35);
+            transform: scale(1.01);
+        }
+        .tap-hint {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.32em;
+            color: var(--primary);
+            text-transform: uppercase;
+            margin-top: 12px;
+            animation: blink 1.6s ease-in-out infinite;
+        }
+
+        /* ── TILE REVEAL ── */
+        .widget .section-title,
+        .widget hr,
+        .widget .button-grid a,
+        #reprintSection {
+            opacity: 0;
+            transform: translateY(10px);
+            pointer-events: none;
+        }
+        @keyframes tileIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0);    }
+        }
+        .tile-animate {
+            animation: tileIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            pointer-events: auto !important;
+        }
+
+        /* ── REPRINT ── */
+        #reprintSection { margin-top: 18px; text-align: center; display: none; }
+        #reprintSection button {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--border);
+            padding: 9px 22px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+        #reprintSection button:hover {
+            border-color: var(--border-bright);
+            background: var(--primary-dim);
+            box-shadow: 0 0 10px rgba(232, 92, 51, 0.15);
+        }
+
+        /* ── LABELS ── */
+        .label-container { display: none; }
+        .label-rt200 {
+            width: 2.25in; height: 1.25in; padding: 0.1in;
+            border: 1px solid #000;
+            font-family: 'Montserrat', sans-serif;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .label-logo { width: 2.1in; height: auto; max-height: 0.35in; object-fit: contain; margin-bottom: 0.08in; display: block; }
+        .label-text { font-weight: bold; font-style: italic; font-size: 12pt; margin: 0.05in 0; color: #000 !important; }
+        .label-barcode { width: 2.1in; height: 50px; margin-top: 0.08in; }
+
+        .hidden { display: none !important; }
+
+        @media print {
+            @page { size: 2.25in 1.25in; margin: 0; }
+            body, html { width: 2.25in; height: 1.25in; margin: 0; padding: 0; }
+            body * { visibility: hidden; }
+            .label-container, .label-container * { visibility: visible; }
+            .label-container { position: absolute; top: 0; left: 0; display: block !important; }
+            .label-rt200 { width: 2.25in !important; height: 1.25in !important; padding: 0.1in !important; margin: 0 !important; page-break-after: always; }
+        }
+
+        @media (max-width: 700px) {
+            .widget { padding: 20px 16px; }
+            .button-grid { grid-template-columns: 1fr 1fr; }
+            .bar-title { font-size: 9px; letter-spacing: 0.18em; }
+            .widget a { height: 46px; font-size: 11px; }
+            .widget a.btn-featured { height: 56px; font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<!-- ── AUTH GATE ── -->
+<div id="authGate">
+    <div class="auth-card">
+        <div class="auth-corner-tr"></div>
+        <div class="auth-corner-bl"></div>
+        <img src="https://dce629aa.rocketcdn.me/wp-content/uploads/2024/05/POS360-Logo-horizontal-Dark-BG-1.png.webp" alt="POS360" class="auth-logo">
+        <div class="auth-title">Supply Chain Mothership</div>
+        <div class="auth-subtitle">Authentication Required — Clearance Level 3</div>
+        <input type="password" class="auth-input" id="authInput" placeholder="ENTER ACCESS CODE" autocomplete="off">
+        <button class="auth-btn" onclick="authenticate()">Initiate Access</button>
+        <div class="auth-error" id="authError">⚠ ACCESS DENIED — Invalid Credentials</div>
+    </div>
+</div>
+
+<!-- ── SPINNERS ── -->
+<div id="salSpinner">
+    <div class="spinner-ring"></div>
+    <div class="spinner-label">Summoning SAL-9000...</div>
+</div>
+
+<div id="loadingSpinner">
+    <div class="spinner-ring"></div>
+    <div class="spinner-label">Generating Labels...</div>
+</div>
+
+<!-- ── MAIN APP ── -->
+<div id="mainApp">
+    <div id="topBar">
+        <div class="bar-status">
+            <div class="status-dot"></div>
+            <div class="status-text">Online</div>
+        </div>
+        <div class="bar-title">Supply Chain Mothership</div>
+        <div class="bar-clock" id="liveClock"></div>
+    </div>
+
+    <div class="widget">
+
+        <div id="revealGate" onclick="revealTiles()">
+            <img src="https://i.ibb.co/mCgwn5M0/SUPPLYCHAIN360.png" alt="Supply Chain Mothership">
+            <div class="tap-hint">&#x25B6; Tap to Access</div>
+        </div>
+
+        <div class="section-title">KPI's</div>
+        <div class="button-grid">
+            <a href="https://okr3.vercel.app/" target="_blank" class="btn-featured">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7l-10-5z"/></svg> Supply Chain Mainframe
+            </a>
+        </div>
+
+        <hr>
+
+        <div class="section-title">Transactions</div>
+        <div class="button-grid">
+            <a href="https://7003982.app.netsuite.com/app/accounting/transactions/purchordermanager.nl?reminders=T&type=receive" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7l-10-5z"/></svg> Receive PO's
+            </a>
+            <a href="https://7003982.app.netsuite.com/app/accounting/transactions/transactionlist.nl?Transaction_TYPE=InvCount" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Complete Count
+            </a>
+            <a href="https://7003982.app.netsuite.com/app/accounting/transactions/salesordermanager.nl?reminders=T&type=fulfill" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4z"/></svg> Fulfill Orders
+            </a>
+            <a href="#" onclick="event.preventDefault(); openModal();">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M2 6h2v12H2V6zm3 0h1v12H5V6zm2 0h3v12H7V6zm4 0h1v12h-1V6zm2 0h2v12h-2V6zm3 0h3v12h-3V6zm4 0h1v12h-1V6z"/></svg> Serialize Product
+            </a>
+        </div>
+
+        <hr>
+
+        <div class="section-title">Reports</div>
+        <div class="button-grid">
+            <a href="https://7003982.app.netsuite.com/app/reporting/reportrunner.nl?cr=321" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> OH Inventory
+            </a>
+            <a href="https://7003982.app.netsuite.com/app/reporting/reportrunner.nl?cr=342" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> Fulfillment Report
+            </a>
+            <a href="https://7003982.app.netsuite.com/app/reporting/reportrunner.nl?cr=333" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> Monthly Builds
+            </a>
+            <a href="https://7003982.app.netsuite.com/app/accounting/transactions/purchordermanager.nl?reminders=T&type=receive" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> Open PO's
+            </a>
+            <a href="https://7003982.app.netsuite.com/app/reporting/reportrunner.nl?cr=359&reload=T&whence=&siaT=1780372489425&siaWhc=%2Fapp%2Fcenter%2Fcard.nl&siaPs=2&siaPfx=&siaQ=Negative+in&siaNv=ps" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> Negative Inventory
+            </a>
+            <a href="https://7003982.app.netsuite.com/app/reporting/reportrunner.nl?cr=385&reload=T&whence=&siaT=1780372515255&siaWhc=%2Fapp%2Freporting%2Freportrunner.nl&siaNv=sc" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> Open Sales Orders
+            </a>
+        </div>
+
+        <hr>
+
+        <div class="section-title">Excel Files</div>
+        <div class="button-grid">
+            <a href="https://pos360v2-my.sharepoint.com/personal/hperalta_pos360_com/Documents/360_pro_count.xlsx?web=1" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> 360 Pro - Month Close
+            </a>
+            <a href="https://pos360v2-my.sharepoint.com/:x:/r/personal/nrzeppa_pos360_com/Documents/SD%20Count%20+%20Transfer%20Sheet.xlsx?d=w9f3dcb2bec61417e8fef4042cb2b9fff&csf=1&web=1&e=VgsjoD" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> SD Month Close
+            </a>
+            <a href="https://docs.google.com/spreadsheets/d/1XDosix_38hevW4Iw03ncOOuLjXEs0W2pr46gJs2H9po/edit?gid=0#gid=0" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> Serials DB
+            </a>
+            <a href="#" style="opacity:0.45; cursor:not-allowed;" onclick="event.preventDefault();">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> Master Forecast
+            </a>
+        </div>
+
+        <hr>
+
+        <div class="section-title">Resources</div>
+        <div class="button-grid">
+            <a href="https://university.pos360.com/app/user-portal/knowledge-base/content/dc877eb6-b5a1-11f0-8ef9-3e10d72740c3" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M18 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg> SOP's
+            </a>
+            <a href="https://pos360.lightning.force.com/lightning/r/Dashboard/01ZPY000008nwsf2AA/view" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M3 12h4v8H3v-8zm6-6h4v14H9V6zm6 3h4v11h-4V9z"/></svg> Salesforce Dashboard
+            </a>
+            <a href="https://cogs-tawny.vercel.app" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M3 12h4v8H3v-8zm6-6h4v14H9V6zm6 3h4v11h-4V9z"/></svg> Materials Dashboard
+            </a>
+            <a href="https://production-display.vercel.app/" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M3 3h18v18H3V3zm2 2v14h14V5H5zm2 2h10v2H7V7zm0 4h10v2H7v-2zm0 4h7v2H7v-2z"/></svg> Production Schedule
+            </a>
+            <a href="mailto:frontdesk@californiarecycles.com?subject=E-waste%20Pick%20Up%20Request">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg> Schedule E-Waste
+            </a>
+            <a href="https://join.slack.com/share/enQtMTEyNjExODg0NTQxNjEtZmViNTkxNjcxNzQ2OWRhMDU2MGVmODdhMzI3NDk1YmRiZDlmYWUyNzFlNTg0OGQzZWNmNzgzYmMzMzQ3Y2VlZA" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zm1.271 0a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zm2.521-10.123a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zm0 1.271a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zm10.122 2.521a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zm-1.268 0a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zm-2.523 10.122a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zm0-1.268a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></svg> #SupplyChain
+            </a>
+        </div>
+
+        <div id="reprintSection">
+            <button onclick="reprintLastBatch()">&#x21BA; Reprint Last Batch</button>
+        </div>
+
+    </div>
+</div>
+
+<!-- ── SERIALIZE MODAL ── -->
+<div id="serializeModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">×</span>
+        <div class="modal-title">[ Serialize Product ]</div>
+        <form id="serializeForm">
+            <div class="form-group">
+                <label>Date</label>
+                <input type="date" id="date" required>
+            </div>
+            <div class="form-group">
+                <label>Product</label>
+                <select id="productType" required>
+                    <option value="" disabled selected>Select...</option>
+                    <option value="P36">360 Pro (P)</option>
+                    <option value="S36">360 Pro (S)</option>
+                    <option value="AUR">Aures Sango</option>
+                    <option value="WSC">Wired Scanner</option>
+                    <option value="WLS">Wireless Scanner</option>
+                    <option value="DTLP">Deal Tag Label Printer</option>
+                    <option value="DP">Deli Printer</option>
+                    <option value="RTP">Retail Tag Printer</option>
+                    <option value="TRP">Thermal Receipt Printer</option>
+                    <option value="CPT">Cradlepoint</option>
+                    <option value="MSC">Meat Scale</option>
+                    <option value="GSC">Grocery Scale</option>
+                    <option value="LCD">Customer LCD Kit</option>
+                    <option value="PIN">Pin Pad</option>
+                    <option value="POL">Pole Display</option>
+                    <option value="OTH">Other</option>
+                </select>
+            </div>
+            <div class="form-group hidden" id="otherProductGroup">
+                <label>Product Name</label>
+                <input type="text" id="otherProduct" placeholder="e.g., Custom Device">
+            </div>
+            <div class="form-group">
+                <label>Vendor</label>
+                <input type="text" id="vendor" required>
+            </div>
+            <div class="form-group">
+                <label>Serialized By</label>
+                <select id="serializedBy" required>
+                    <option value="" disabled selected>Select...</option>
+                    <option value="Jeremy">Jeremy</option>
+                    <option value="Hector">Hector</option>
+                    <option value="Nate">Nate</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="form-group hidden" id="serializedByOtherGroup">
+                <label>Enter Name</label>
+                <input type="text" id="serializedByOther">
+            </div>
+            <div class="form-group">
+                <label>PO # <small style="color:#444;">(optional)</small></label>
+                <input type="text" id="poNumber" placeholder="e.g., PO12345">
+            </div>
+            <div class="form-group">
+                <label>Assembled By</label>
+                <select id="assembledBy">
+                    <option value="" selected>— None —</option>
+                    <option value="Thang">Thang</option>
+                    <option value="Jeremy">Jeremy</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="form-group hidden" id="assembledByOtherGroup">
+                <label>Enter Name</label>
+                <input type="text" id="assembledByOther" placeholder="e.g., John">
+            </div>
+            <div class="form-group">
+                <label>Quantity</label>
+                <input type="number" id="quantity" min="1" max="999" required>
+            </div>
+            <div class="form-group">
+                <label>Print Style</label>
+                <select id="printStyle" required>
+                    <option value="rt200">Thermal Roll (2.25" x 1.25")</option>
+                    <option value="8x10">8x10 Sheet</option>
+                </select>
+            </div>
+            <button type="submit">Generate &amp; Print</button>
+        </form>
+    </div>
+</div>
+
+<div id="labelsContainer" class="label-container"></div>
+
+<script>
+    // ── AUTH ──
+    const _k = atob('UGF5bWVudHMxMjMk');
+
+    function authenticate() {
+        const val = document.getElementById('authInput').value;
+        if (val === _k) {
+            document.getElementById('authGate').style.display = 'none';
+            const app = document.getElementById('mainApp');
+            app.style.display = 'flex';
+            sessionStorage.setItem('scm_auth', '1');
+        } else {
+            const err = document.getElementById('authError');
+            err.style.display = 'block';
+            document.getElementById('authInput').value = '';
+            setTimeout(() => { err.style.display = 'none'; }, 3200);
+        }
+    }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && document.getElementById('authGate').style.display !== 'none') {
+            authenticate();
+        }
+    });
+
+    if (sessionStorage.getItem('scm_auth') === '1') {
+        document.getElementById('authGate').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'flex';
+    }
+
+    // ── STARFIELD ──
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const STAR_COUNT = 200;
+    const stars = Array.from({ length: STAR_COUNT }, () => ({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        r: Math.random() * 1.5 + 0.2,
+        speed: Math.random() * 0.12 + 0.02,
+        opacity: Math.random() * 0.55 + 0.15,
+        twinkle: Math.random() * Math.PI * 2
+    }));
+
+    const GRID_COLS = 22;
+    const GRID_ROWS = 14;
+
+    function drawGrid() {
+        const w = canvas.width, h = canvas.height;
+        const cw = w / GRID_COLS, ch = h / GRID_ROWS;
+        ctx.strokeStyle = 'rgba(232, 92, 51, 0.035)';
+        ctx.lineWidth = 0.5;
+        for (let i = 0; i <= GRID_COLS; i++) {
+            ctx.beginPath(); ctx.moveTo(i * cw, 0); ctx.lineTo(i * cw, h); ctx.stroke();
+        }
+        for (let j = 0; j <= GRID_ROWS; j++) {
+            ctx.beginPath(); ctx.moveTo(0, j * ch); ctx.lineTo(w, j * ch); ctx.stroke();
+        }
+    }
+
+    let frame = 0;
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Deep space gradient
+        const grad = ctx.createRadialGradient(
+            canvas.width * 0.5, canvas.height * 0.45, 0,
+            canvas.width * 0.5, canvas.height * 0.45, canvas.width * 0.75
+        );
+        grad.addColorStop(0, 'rgba(18, 7, 3, 1)');
+        grad.addColorStop(0.55, 'rgba(6, 3, 1, 1)');
+        grad.addColorStop(1, 'rgba(0, 0, 0, 1)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        drawGrid();
+
+        // Orange nebula
+        const ng = ctx.createRadialGradient(
+            canvas.width * 0.72, canvas.height * 0.22, 0,
+            canvas.width * 0.72, canvas.height * 0.22, canvas.width * 0.38
+        );
+        ng.addColorStop(0, `rgba(232, 92, 51, ${0.035 + 0.01 * Math.sin(frame * 0.015)})`);
+        ng.addColorStop(1, 'transparent');
+        ctx.fillStyle = ng;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Second subtle glow (blue-ish cold side)
+        const ng2 = ctx.createRadialGradient(
+            canvas.width * 0.15, canvas.height * 0.7, 0,
+            canvas.width * 0.15, canvas.height * 0.7, canvas.width * 0.3
+        );
+        ng2.addColorStop(0, 'rgba(30, 60, 90, 0.04)');
+        ng2.addColorStop(1, 'transparent');
+        ctx.fillStyle = ng2;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Stars
+        stars.forEach(s => {
+            s.twinkle += 0.018;
+            const alpha = s.opacity * (0.65 + 0.35 * Math.sin(s.twinkle));
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 215, 190, ${alpha})`;
+            ctx.fill();
+            s.y -= s.speed;
+            if (s.y < -2) {
+                s.y = canvas.height + 2;
+                s.x = Math.random() * canvas.width;
+            }
+        });
+
+        frame++;
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    // ── LIVE CLOCK ──
+    function updateClock() {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2,'0');
+        const m = String(now.getMinutes()).padStart(2,'0');
+        const s = String(now.getSeconds()).padStart(2,'0');
+        const el = document.getElementById('liveClock');
+        if (el) el.textContent = `${h}:${m}:${s}`;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // ── REVEAL TILES ──
+    function revealTiles() {
+        const gate = document.getElementById('revealGate');
+        gate.classList.add('gate-out');
+        setTimeout(() => {
+            gate.style.display = 'none';
+            const items = document.querySelectorAll(
+                '.widget .section-title, .widget hr, .widget .button-grid a, #reprintSection'
+            );
+            items.forEach((el, i) => {
+                setTimeout(() => el.classList.add('tile-animate'), i * 52);
+            });
+        }, 450);
+    }
+
+    // ── FORM INIT ──
+    document.getElementById('date').value = new Date().toISOString().split('T')[0];
+
+    document.getElementById('productType').addEventListener('change', e => {
+        const show = e.target.value === 'OTH';
+        document.getElementById('otherProductGroup').classList.toggle('hidden', !show);
+        document.getElementById('otherProduct').required = show;
+    });
+    document.getElementById('serializedBy').addEventListener('change', e => {
+        const show = e.target.value === 'other';
+        document.getElementById('serializedByOtherGroup').classList.toggle('hidden', !show);
+        document.getElementById('serializedByOther').required = show;
+    });
+    document.getElementById('assembledBy').addEventListener('change', e => {
+        const show = e.target.value === 'other';
+        document.getElementById('assembledByOtherGroup').classList.toggle('hidden', !show);
+        document.getElementById('assembledByOther').required = show;
+    });
+
+    function openModal() { document.getElementById('serializeModal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('serializeModal').style.display = 'none'; }
+
+    function summonSAL(e) {
+        e.preventDefault();
+        const spinner = document.getElementById('salSpinner');
+        spinner.style.display = 'flex';
+        setTimeout(() => {
+            spinner.style.display = 'none';
+            window.open('https://zapbot-937764.zapier.app', '_blank');
+        }, 1800);
+    }
+
+    let lastSerials = [];
+
+    document.getElementById('serializeForm').addEventListener('submit', e => {
+        e.preventDefault();
+        document.getElementById('loadingSpinner').style.display = 'flex';
+
+        const date = document.getElementById('date').value;
+        const code = document.getElementById('productType').value;
+        const other = document.getElementById('otherProduct').value.trim();
+        const product = code === 'OTH' ? other : document.querySelector(`#productType option[value="${code}"]`).textContent;
+        const vendor = document.getElementById('vendor').value;
+        const bySelect = document.getElementById('serializedBy').value;
+        const byOther = document.getElementById('serializedByOther').value.trim();
+        const serializedBy = bySelect === 'other' ? byOther : bySelect;
+        const po = document.getElementById('poNumber').value || '—';
+        const assembledSelect = document.getElementById('assembledBy').value;
+        const assembledOther = document.getElementById('assembledByOther').value.trim();
+        const assembled = assembledSelect === 'other' ? assembledOther : (assembledSelect || '—');
+        const qty = parseInt(document.getElementById('quantity').value);
+
+        const yymmdd = date.slice(2).replace(/-/g, '');
+        const finalCode = code === 'OTH' ? 'OTH' : code;
+        const serials = Array.from({ length: qty }, (_, i) =>
+            `${finalCode}${yymmdd}${String(i + 1).padStart(3, '0')}`
+        );
+
+        lastSerials = serials;
+        document.getElementById('reprintSection').style.display = 'block';
+
+        const container = document.getElementById('labelsContainer');
+        container.innerHTML = '';
+        container.style.display = 'block';
+
+        const logoUrl = 'https://dce629aa.delivery.rocketcdn.me/wp-content/uploads/2024/05/POS360-Logo-horizontal-Dark-BG-1.png.webp';
+        serials.forEach((sn, index) => {
+            const div = document.createElement('div');
+            div.className = 'label-rt200';
+            div.innerHTML = `
+                <img src="${logoUrl}" class="label-logo">
+                <div class="label-text">SN: ${sn}</div>
+                <svg class="label-barcode" id="bc-${index}"></svg>
+            `;
+            container.appendChild(div);
+            JsBarcode(`#bc-${index}`, sn, { format: "CODE128", width: 1.6, height: 50, displayValue: false });
+        });
+
+        fetch('https://script.google.com/macros/s/AKfycbxng6MNUKpDNhTfkLfrrpLJFmsYOjh8yaAEwVMEeoEQBpyM4Su7p-TyGrWAjnxjzMughQ/exec', {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                spreadsheetId: '1XDosix_38hevW4Iw03ncOOuLjXEs0W2pr46gJs2H9po',
+                values: serials.map(sn => [date, product, vendor, sn, serializedBy, po, assembled])
+            })
+        });
+
+        setTimeout(() => {
+            document.getElementById('loadingSpinner').style.display = 'none';
+            window.print();
+            container.style.display = 'none';
+            closeModal();
+        }, 150);
+    });
+
+    function reprintLastBatch() {
+        if (!lastSerials.length) return alert('No batch to reprint.');
+        const container = document.getElementById('labelsContainer');
+        container.innerHTML = '';
+        container.style.display = 'block';
+        const logoUrl = 'https://dce629aa.delivery.rocketcdn.me/wp-content/uploads/2024/05/POS360-Logo-horizontal-Dark-BG-1.png.webp';
+        lastSerials.forEach((sn, index) => {
+            const div = document.createElement('div');
+            div.className = 'label-rt200';
+            div.innerHTML = `
+                <img src="${logoUrl}" class="label-logo">
+                <div class="label-text">SN: ${sn}</div>
+                <svg class="label-barcode" id="bc-reprint-${index}"></svg>
+            `;
+            container.appendChild(div);
+            JsBarcode(`#bc-reprint-${index}`, sn, { format: "CODE128", width: 1.6, height: 50, displayValue: false });
+        });
+        window.print();
+        container.style.display = 'none';
+    }
+</script>
+</body>
+</html>
