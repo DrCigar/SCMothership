@@ -588,33 +588,9 @@
             box-shadow: 0 0 10px rgba(232, 92, 51, 0.15);
         }
 
-        /* ── LABELS ── */
-        .label-container { display: none; }
-        .label-rt200 {
-            width: 2.25in; height: 1.25in; padding: 0.1in;
-            border: 1px solid #000;
-            font-family: 'Montserrat', sans-serif;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-        .label-logo { width: 2.1in; height: auto; max-height: 0.35in; object-fit: contain; margin-bottom: 0.08in; display: block; }
-        .label-text { font-weight: bold; font-style: italic; font-size: 12pt; margin: 0.05in 0; color: #000 !important; }
-        .label-barcode { width: 2.1in; height: 50px; margin-top: 0.08in; }
 
         .hidden { display: none !important; }
 
-        @media print {
-            @page { size: 2.25in 1.25in; margin: 0; }
-            body, html { width: 2.25in; height: 1.25in; margin: 0; padding: 0; }
-            body * { visibility: hidden; }
-            .label-container, .label-container * { visibility: visible; }
-            .label-container { position: absolute; top: 0; left: 0; display: block !important; }
-            .label-rt200 { width: 2.25in !important; height: 1.25in !important; padding: 0.1in !important; margin: 0 !important; page-break-after: always; }
-        }
 
         @media (max-width: 700px) {
             .widget { padding: 20px 16px; }
@@ -853,7 +829,6 @@
     </div>
 </div>
 
-<div id="labelsContainer" class="label-container"></div>
 
 <script>
     // ── AUTH ──
@@ -944,6 +919,54 @@
 
     let lastSerials = [];
 
+    function openPrintWindow(serials) {
+        const logoUrl = 'https://i.ibb.co/DHShY5Gt/POS360-Logo-horizontal-Dark-BG-2.png';
+        const labelsHtml = serials.map((sn, i) => `
+            <div class="label-rt200">
+                <img src="${logoUrl}" class="label-logo" crossorigin="anonymous">
+                <div class="label-text">SN: ${sn}</div>
+                <svg class="label-barcode" id="bc-${i}"></svg>
+            </div>`).join('');
+
+        const barcodeScript = serials.map((sn, i) =>
+            `JsBarcode('#bc-${i}', '${sn}', { format: "CODE128", width: 1.6, height: 50, displayValue: false });`
+        ).join('\n');
+
+        const win = window.open('', '_blank', 'width=400,height=300');
+        win.document.write(`<!DOCTYPE html><html><head>
+            <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"><\/script>
+            <style>
+                @page { size: 2.25in 1.25in; margin: 0; }
+                * { box-sizing: border-box; }
+                body { margin: 0; padding: 0; background: #fff; }
+                .label-rt200 {
+                    width: 2.25in; height: 1.25in; padding: 0.1in;
+                    font-family: Arial, sans-serif;
+                    text-align: center;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    overflow: hidden;
+                    page-break-after: always;
+                    break-after: page;
+                }
+                .label-logo { width: 2.1in; height: auto; max-height: 0.35in; object-fit: contain; margin-bottom: 0.08in; display: block; }
+                .label-text { font-weight: bold; font-style: italic; font-size: 11pt; margin: 0.04in 0; color: #000; }
+                .label-barcode { width: 2.1in; height: 50px; margin-top: 0.06in; }
+            </style>
+        </head><body>
+            ${labelsHtml}
+            <script>
+                window.onload = function() {
+                    ${barcodeScript}
+                    setTimeout(function() { window.print(); window.close(); }, 600);
+                };
+            <\/script>
+        </body></html>`);
+        win.document.close();
+    }
+
     document.getElementById('serializeForm').addEventListener('submit', e => {
         e.preventDefault();
         document.getElementById('loadingSpinner').style.display = 'flex';
@@ -971,23 +994,6 @@
         lastSerials = serials;
         document.getElementById('reprintSection').style.display = 'block';
 
-        const container = document.getElementById('labelsContainer');
-        container.innerHTML = '';
-        container.style.display = 'block';
-
-        const logoUrl = 'https://dce629aa.delivery.rocketcdn.me/wp-content/uploads/2024/05/POS360-Logo-horizontal-Dark-BG-1.png.webp';
-        serials.forEach((sn, index) => {
-            const div = document.createElement('div');
-            div.className = 'label-rt200';
-            div.innerHTML = `
-                <img src="${logoUrl}" class="label-logo">
-                <div class="label-text">SN: ${sn}</div>
-                <svg class="label-barcode" id="bc-${index}"></svg>
-            `;
-            container.appendChild(div);
-            JsBarcode(`#bc-${index}`, sn, { format: "CODE128", width: 1.6, height: 50, displayValue: false });
-        });
-
         fetch('https://script.google.com/macros/s/AKfycbxng6MNUKpDNhTfkLfrrpLJFmsYOjh8yaAEwVMEeoEQBpyM4Su7p-TyGrWAjnxjzMughQ/exec', {
             method: 'POST',
             mode: 'no-cors',
@@ -1000,31 +1006,14 @@
 
         setTimeout(() => {
             document.getElementById('loadingSpinner').style.display = 'none';
-            window.print();
-            container.style.display = 'none';
+            openPrintWindow(serials);
             closeModal();
         }, 150);
     });
 
     function reprintLastBatch() {
         if (!lastSerials.length) return alert('No batch to reprint.');
-        const container = document.getElementById('labelsContainer');
-        container.innerHTML = '';
-        container.style.display = 'block';
-        const logoUrl = 'https://dce629aa.delivery.rocketcdn.me/wp-content/uploads/2024/05/POS360-Logo-horizontal-Dark-BG-1.png.webp';
-        lastSerials.forEach((sn, index) => {
-            const div = document.createElement('div');
-            div.className = 'label-rt200';
-            div.innerHTML = `
-                <img src="${logoUrl}" class="label-logo">
-                <div class="label-text">SN: ${sn}</div>
-                <svg class="label-barcode" id="bc-reprint-${index}"></svg>
-            `;
-            container.appendChild(div);
-            JsBarcode(`#bc-reprint-${index}`, sn, { format: "CODE128", width: 1.6, height: 50, displayValue: false });
-        });
-        window.print();
-        container.style.display = 'none';
+        openPrintWindow(lastSerials);
     }
 </script>
 </body>
