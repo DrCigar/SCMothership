@@ -23,18 +23,10 @@
 
         body {
             font-family: 'Montserrat', sans-serif;
-            background: #000;
+            background: #000 url('https://i.ibb.co/whKPTYx4/Pngtree-technology-honeycomb-black-gold-background-1298460.jpg') center center / cover fixed;
             color: var(--text);
             min-height: 100vh;
             overflow-x: hidden;
-        }
-
-        /* ── CANVAS BACKGROUND ── */
-        #bgCanvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 0;
         }
 
         /* ── SCANLINES ── */
@@ -317,8 +309,8 @@
             align-items: center;
             gap: 10px;
             font-family: 'Share Tech Mono', monospace;
-            font-size: 10px;
-            letter-spacing: 0.32em;
+            font-size: 14px;
+            letter-spacing: 0.28em;
             color: var(--primary);
             text-transform: uppercase;
             margin: 22px 0 13px;
@@ -548,45 +540,6 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
 
-        /* ── REVEAL GATE ── */
-        #revealGate {
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 8px 0 20px;
-            transition: opacity 0.45s ease, transform 0.45s ease;
-        }
-        #revealGate.gate-out {
-            opacity: 0;
-            transform: scale(0.96);
-            pointer-events: none;
-        }
-        #revealGate img {
-            width: auto;
-            max-width: 100%;
-            max-height: 360px;
-            border-radius: 10px;
-            border: 1px solid var(--border-bright);
-            box-shadow: 0 0 24px rgba(232,92,51,0.14);
-            transition: box-shadow 0.3s, transform 0.3s;
-            display: block;
-            margin: 0 auto;
-        }
-        #revealGate:hover img {
-            box-shadow: 0 0 40px rgba(232,92,51,0.35);
-            transform: scale(1.01);
-        }
-        .tap-hint {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 9px;
-            letter-spacing: 0.32em;
-            color: var(--primary);
-            text-transform: uppercase;
-            margin-top: 12px;
-            animation: blink 1.6s ease-in-out infinite;
-        }
-
         /* ── TILE REVEAL ── */
         .widget .section-title,
         .widget hr,
@@ -674,7 +627,6 @@
 </head>
 <body>
 
-<canvas id="bgCanvas"></canvas>
 
 <!-- ── AUTH GATE ── -->
 <div id="authGate">
@@ -707,16 +659,11 @@
             <div class="status-dot"></div>
             <div class="status-text">Online</div>
         </div>
-        <div class="bar-title">Supply Chain Mothership</div>
+        <div class="bar-title"><img src="https://i.ibb.co/DHShY5Gt/POS360-Logo-horizontal-Dark-BG-2.png" alt="POS360" style="height:28px;width:auto;filter:drop-shadow(0 0 8px rgba(232,92,51,0.4));"></div>
         <div class="bar-clock" id="liveClock"></div>
     </div>
 
     <div class="widget">
-
-        <div id="revealGate" onclick="revealTiles()">
-            <img src="https://i.ibb.co/mCgwn5M0/SUPPLYCHAIN360.png" alt="Supply Chain Mothership">
-            <div class="tap-hint">&#x25B6; Tap to Access</div>
-        </div>
 
         <div class="section-title">KPI's</div>
         <div class="button-grid">
@@ -919,6 +866,7 @@
             const app = document.getElementById('mainApp');
             app.style.display = 'flex';
             sessionStorage.setItem('scm_auth', '1');
+            revealTiles();
         } else {
             const err = document.getElementById('authError');
             err.style.display = 'block';
@@ -936,102 +884,9 @@
     if (sessionStorage.getItem('scm_auth') === '1') {
         document.getElementById('authGate').style.display = 'none';
         document.getElementById('mainApp').style.display = 'flex';
+        revealTiles();
     }
 
-    // ── STARFIELD ──
-    const canvas = document.getElementById('bgCanvas');
-    const ctx = canvas.getContext('2d');
-
-    function resize() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-    resize();
-    window.addEventListener('resize', resize);
-
-    const STAR_COUNT = 200;
-    const stars = Array.from({ length: STAR_COUNT }, () => ({
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
-        r: Math.random() * 1.5 + 0.2,
-        speed: Math.random() * 0.12 + 0.02,
-        opacity: Math.random() * 0.55 + 0.15,
-        twinkle: Math.random() * Math.PI * 2
-    }));
-
-    const GRID_COLS = 22;
-    const GRID_ROWS = 14;
-
-    function drawGrid() {
-        const w = canvas.width, h = canvas.height;
-        const cw = w / GRID_COLS, ch = h / GRID_ROWS;
-        ctx.strokeStyle = 'rgba(232, 92, 51, 0.035)';
-        ctx.lineWidth = 0.5;
-        for (let i = 0; i <= GRID_COLS; i++) {
-            ctx.beginPath(); ctx.moveTo(i * cw, 0); ctx.lineTo(i * cw, h); ctx.stroke();
-        }
-        for (let j = 0; j <= GRID_ROWS; j++) {
-            ctx.beginPath(); ctx.moveTo(0, j * ch); ctx.lineTo(w, j * ch); ctx.stroke();
-        }
-    }
-
-    let frame = 0;
-
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Deep space gradient
-        const grad = ctx.createRadialGradient(
-            canvas.width * 0.5, canvas.height * 0.45, 0,
-            canvas.width * 0.5, canvas.height * 0.45, canvas.width * 0.75
-        );
-        grad.addColorStop(0, 'rgba(18, 7, 3, 1)');
-        grad.addColorStop(0.55, 'rgba(6, 3, 1, 1)');
-        grad.addColorStop(1, 'rgba(0, 0, 0, 1)');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        drawGrid();
-
-        // Orange nebula
-        const ng = ctx.createRadialGradient(
-            canvas.width * 0.72, canvas.height * 0.22, 0,
-            canvas.width * 0.72, canvas.height * 0.22, canvas.width * 0.38
-        );
-        ng.addColorStop(0, `rgba(232, 92, 51, ${0.035 + 0.01 * Math.sin(frame * 0.015)})`);
-        ng.addColorStop(1, 'transparent');
-        ctx.fillStyle = ng;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Second subtle glow (blue-ish cold side)
-        const ng2 = ctx.createRadialGradient(
-            canvas.width * 0.15, canvas.height * 0.7, 0,
-            canvas.width * 0.15, canvas.height * 0.7, canvas.width * 0.3
-        );
-        ng2.addColorStop(0, 'rgba(30, 60, 90, 0.04)');
-        ng2.addColorStop(1, 'transparent');
-        ctx.fillStyle = ng2;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Stars
-        stars.forEach(s => {
-            s.twinkle += 0.018;
-            const alpha = s.opacity * (0.65 + 0.35 * Math.sin(s.twinkle));
-            ctx.beginPath();
-            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(255, 215, 190, ${alpha})`;
-            ctx.fill();
-            s.y -= s.speed;
-            if (s.y < -2) {
-                s.y = canvas.height + 2;
-                s.x = Math.random() * canvas.width;
-            }
-        });
-
-        frame++;
-        requestAnimationFrame(animate);
-    }
-    animate();
 
     // ── LIVE CLOCK ──
     function updateClock() {
@@ -1047,17 +902,12 @@
 
     // ── REVEAL TILES ──
     function revealTiles() {
-        const gate = document.getElementById('revealGate');
-        gate.classList.add('gate-out');
-        setTimeout(() => {
-            gate.style.display = 'none';
-            const items = document.querySelectorAll(
-                '.widget .section-title, .widget hr, .widget .button-grid a, #reprintSection'
-            );
-            items.forEach((el, i) => {
-                setTimeout(() => el.classList.add('tile-animate'), i * 52);
-            });
-        }, 450);
+        const items = document.querySelectorAll(
+            '.widget .section-title, .widget hr, .widget .button-grid a, #reprintSection'
+        );
+        items.forEach((el, i) => {
+            setTimeout(() => el.classList.add('tile-animate'), i * 52);
+        });
     }
 
     // ── FORM INIT ──
