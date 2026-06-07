@@ -190,7 +190,7 @@
         #topBar {
             position: fixed;
             top: 0; left: 0;
-            width: 100%; height: 50px;
+            width: 100%; height: 64px;
             z-index: 200;
             display: flex;
             align-items: center;
@@ -241,7 +241,7 @@
             display: none;
             flex-direction: column;
             align-items: center;
-            padding: 70px 16px 48px;
+            padding: 76px 16px 16px;
             position: relative;
             z-index: 1;
             min-height: 100vh;
@@ -273,7 +273,7 @@
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 28px 32px 28px;
+            padding: 16px 28px 16px;
             width: 100%;
             max-width: 980px;
             box-shadow:
@@ -313,7 +313,7 @@
             letter-spacing: 0.28em;
             color: var(--primary);
             text-transform: uppercase;
-            margin: 22px 0 13px;
+            margin: 10px 0 6px;
         }
         .section-title::before,
         .section-title::after {
@@ -326,21 +326,21 @@
             background: linear-gradient(to left, var(--border-bright), transparent);
         }
 
-        hr { border: 0; height: 1px; background: var(--border); margin: 20px 0; }
+        hr { border: 0; height: 1px; background: var(--border); margin: 8px 0; }
 
         /* ── BUTTONS ── */
         .button-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin: 10px 0;
+            gap: 7px;
+            margin: 6px 0;
         }
 
         .widget a {
             background: rgba(232, 92, 51, 0.06);
             border: 1px solid var(--border);
             color: #e0e0e0;
-            padding: 14px 12px;
+            padding: 10px 12px;
             border-radius: 7px;
             font-size: 12.5px;
             font-weight: 600;
@@ -350,7 +350,7 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            height: 54px;
+            height: 46px;
             transition: all 0.22s ease;
             position: relative;
             overflow: hidden;
@@ -359,7 +359,7 @@
         /* Featured full-width button (KPI hero) */
         .widget a.btn-featured {
             grid-column: 1 / -1;
-            height: 70px;
+            height: 58px;
             font-size: 15px;
             font-weight: 700;
             letter-spacing: 0.12em;
@@ -659,7 +659,7 @@
             <div class="status-dot"></div>
             <div class="status-text">Online</div>
         </div>
-        <div class="bar-title"><img src="https://i.ibb.co/DHShY5Gt/POS360-Logo-horizontal-Dark-BG-2.png" alt="POS360" style="height:28px;width:auto;filter:drop-shadow(0 0 8px rgba(232,92,51,0.4));"></div>
+        <div class="bar-title"><img src="https://i.ibb.co/DHShY5Gt/POS360-Logo-horizontal-Dark-BG-2.png" alt="POS360" style="height:44px;width:auto;filter:drop-shadow(0 0 10px rgba(232,92,51,0.45));"></div>
         <div class="bar-clock" id="liveClock"></div>
     </div>
 
