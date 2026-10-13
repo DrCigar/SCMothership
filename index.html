@@ -66,30 +66,39 @@
             backdrop-filter: blur(14px);
         }
 
-        .auth-mark {
-            font-size: 13px;
-            font-weight: 800;
-            letter-spacing: 0.42em;
-            color: var(--primary);
-            text-transform: uppercase;
-            margin-bottom: 28px;
+        .auth-logo {
+            height: 40px;
+            width: auto;
+            display: block;
+            margin: 0 auto 26px;
         }
 
         .auth-title {
-            font-size: 27px;
+            font-size: 28px;
             font-weight: 800;
-            letter-spacing: -0.015em;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
             color: var(--text);
-            margin-bottom: 10px;
+            line-height: 1.05;
+        }
+
+        .auth-sub {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.42em;
+            color: var(--primary);
+            text-transform: uppercase;
+            margin-top: 8px;
         }
 
         .auth-subtitle {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 500;
             letter-spacing: 0.14em;
             color: var(--dim);
             text-transform: uppercase;
-            margin-bottom: 34px;
+            margin-top: 18px;
+            margin-bottom: 32px;
         }
 
         .auth-input {
@@ -512,8 +521,9 @@
 <!-- ── AUTH GATE ── -->
 <div id="authGate">
     <div class="auth-card">
-        <div class="auth-mark">POS360</div>
-        <div class="auth-title">Supply Chain Ops - Launch Pad</div>
+        <img class="auth-logo" src="https://i.ibb.co/DHShY5Gt/POS360-Logo-horizontal-Dark-BG-2.png" alt="POS360">
+        <div class="auth-title">Supply Chain Ops</div>
+        <div class="auth-sub">Launchpad</div>
         <div class="auth-subtitle">Enter your access code to continue</div>
         <input type="password" class="auth-input" id="authInput" placeholder="Access code" autocomplete="off">
         <button class="auth-btn" onclick="authenticate()">Continue</button>
