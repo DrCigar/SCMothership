@@ -163,12 +163,23 @@
         .bar-title {
             flex: 1;
             text-align: center;
-            font-size: 13px;
-            font-weight: 600;
+            white-space: nowrap;
+            line-height: 1.1;
+        }
+        .bar-title-main {
+            font-size: 18px;
+            font-weight: 800;
             letter-spacing: 0.14em;
             text-transform: uppercase;
             color: var(--text);
-            white-space: nowrap;
+        }
+        .bar-title-sub {
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.36em;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin-top: 3px;
         }
 
         .bar-status {
@@ -486,7 +497,8 @@
             .bar-logo { min-width: 0; }
             .bar-status { min-width: 0; }
             .bar-status .status-text { display: none; }
-            .bar-title { font-size: 10px; letter-spacing: 0.08em; white-space: normal; }
+            .bar-title-main { font-size: 12px; letter-spacing: 0.08em; }
+            .bar-title-sub { font-size: 7px; letter-spacing: 0.24em; }
             .widget { padding: 20px 16px 26px; }
             .button-grid { grid-template-columns: 1fr 1fr; }
             .widget a { height: 50px; font-size: 12.5px; }
@@ -524,7 +536,10 @@
 <div id="mainApp">
     <div id="topBar">
         <div class="bar-logo"><img src="https://i.ibb.co/DHShY5Gt/POS360-Logo-horizontal-Dark-BG-2.png" alt="POS360" style="height:44px;width:auto;"></div>
-        <div class="bar-title">Supply Chain Ops</div>
+        <div class="bar-title">
+            <div class="bar-title-main">Supply Chain Ops</div>
+            <div class="bar-title-sub">Launchpad</div>
+        </div>
         <div class="bar-status">
             <div class="status-dot"></div>
             <div class="status-text">Synced</div>
@@ -594,15 +609,6 @@
             </a>
             <a href="https://7003982.app.netsuite.com/app/reporting/reportrunner.nl?cr=499&reload=T&whence=&siaT=1791912581245&siaWhc=%2Fapp%2Fcommon%2Fitem%2Fitem.nl&siaPs=0&siaPfx=&siaQ=%25warehouse+manager&siaNv=ps" target="_blank">
                 <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> Warehouse Managers Inventory Snapshot
-            </a>
-        </div>
-
-        <hr>
-
-        <div class="section-title">Spreadsheets</div>
-        <div class="button-grid">
-            <a href="https://pos360v2-my.sharepoint.com/:x:/r/personal/nrzeppa_pos360_com/Documents/Master/Supply%20Chain%20Forecasting%20Tool%20-%20MASTER.xlsx?d=wf7a9d77e977f4bf8871eeb60184810e5&csf=1&web=1&e=WbUQqL" target="_blank">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> Master Forecast
             </a>
         </div>
 
