@@ -30,7 +30,11 @@
 
         body {
             font-family: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: var(--bg);
+            background:
+                linear-gradient(rgba(6, 7, 9, 0.55), rgba(6, 7, 9, 0.68)),
+                url('hex-bg.png') center center / cover fixed,
+                var(--bg);
+            background-color: var(--bg);
             color: var(--text);
             min-height: 100vh;
             overflow-x: hidden;
@@ -51,7 +55,7 @@
         }
 
         .auth-card {
-            background: var(--bg-elev);
+            background: rgba(14, 14, 17, 0.82);
             border: 1px solid var(--line);
             border-radius: 18px;
             padding: 56px 56px 48px;
@@ -59,6 +63,7 @@
             max-width: 460px;
             text-align: center;
             position: relative;
+            backdrop-filter: blur(14px);
         }
 
         .auth-mark {
@@ -208,13 +213,14 @@
 
         /* ── WIDGET PANEL ── */
         .widget {
-            background: var(--panel);
-            border: 1px solid var(--line-soft);
+            background: rgba(10, 11, 13, 0.6);
+            border: 1px solid var(--line);
             border-radius: 18px;
             padding: 14px 28px 20px;
             width: 100%;
             max-width: 1040px;
             position: relative;
+            backdrop-filter: blur(10px);
         }
 
         .section-title {
