@@ -236,11 +236,11 @@
 
         .section-title {
             font-size: 11px;
-            font-weight: 600;
+            font-weight: 700;
             letter-spacing: 0.18em;
-            color: var(--dim);
+            color: var(--text);
             text-transform: uppercase;
-            margin: 16px 0 8px;
+            margin: 12px 0 8px;
         }
         .widget > .section-title:first-child { margin-top: 2px; }
 
@@ -248,7 +248,7 @@
             border: 0;
             height: 1px;
             background: var(--line-soft);
-            margin: 16px 0 0;
+            margin: 12px 0 0;
         }
 
         /* ── BUTTONS / TILES ── */
@@ -548,64 +548,46 @@
 
     <div class="widget">
 
-        <div class="section-title">KPI's</div>
+        <div class="section-title">Dashboards</div>
         <div class="button-grid">
             <a href="https://okr3.vercel.app/" target="_blank" class="btn-featured">
                 <svg class="icon" viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7l-10-5z"/></svg> Supply Chain Mainframe
             </a>
+            <a href="https://cogs-tawny.vercel.app" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M3 12h4v8H3v-8zm6-6h4v14H9V6zm6 3h4v11h-4V9z"/></svg> Materials Dashboard
+            </a>
+            <a href="https://production-display.vercel.app/" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M3 3h18v18H3V3zm2 2v14h14V5H5zm2 2h10v2H7V7zm0 4h10v2H7v-2zm0 4h7v2H7v-2z"/></svg> Production Schedule
+            </a>
+            <a href="https://deploymentsdashboard.vercel.app" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> Deployments Mainframe
+            </a>
+            <a href="https://pos360.lightning.force.com/lightning/r/Dashboard/01ZPY000008nwsf2AA/view" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M3 12h4v8H3v-8zm6-6h4v14H9V6zm6 3h4v11h-4V9z"/></svg> Salesforce Dashboard
+            </a>
         </div>
 
         <hr>
 
-        <div class="section-title">Transactions</div>
+        <div class="section-title">Inbound &middot; Receiving &amp; Inventory</div>
         <div class="button-grid">
             <a href="https://7003982.app.netsuite.com/app/accounting/transactions/purchordermanager.nl?reminders=T&type=receive" target="_blank">
                 <svg class="icon" viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7l-10-5z"/></svg> Receive PO's
             </a>
+            <a href="https://7003982.app.netsuite.com/app/accounting/transactions/purchordermanager.nl?reminders=T&type=receive" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> Open PO's
+            </a>
             <a href="https://7003982.app.netsuite.com/app/accounting/transactions/transactionlist.nl?Transaction_TYPE=InvCount" target="_blank">
                 <svg class="icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Complete Count
-            </a>
-            <a href="https://7003982.app.netsuite.com/app/accounting/transactions/salesordermanager.nl?reminders=T&type=fulfill" target="_blank">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4z"/></svg> Fulfill Orders
             </a>
             <a href="https://7003982.app.netsuite.com/app/accounting/transactions/invtrnfr.nl?whence=&siaT=1781650538968&siaWhc=%2Fapp%2Fcenter%2Fcard.nl&siaPs=0&siaPfx=&siaQ=Transfer+inventory&siaNv=ps" target="_blank">
                 <svg class="icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Transfer Inventory
             </a>
-            <a href="https://7003982.app.netsuite.com/app/accounting/transactions/rtnauth.nl?whence=&siaT=1781650610065&siaWhc=%2Fapp%2Fcommon%2Fsearch%2Fsearchresults.nl&siaPs=1&siaPfx=&siaQ=Return+Author&siaNv=ps" target="_blank">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg> RMA
-            </a>
-            <a href="https://ship14.shipstation.com/orders/awaiting-shipment" target="_blank">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4z"/></svg> Create Shipping Label
-            </a>
-            <a href="https://ship14.shipstation.com/shipments/shipped-recent?page=1&pageSize=250" target="_blank">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg> Track Shipments
-            </a>
-            <a href="https://7003982.app.netsuite.com/app/accounting/transactions/transactionlist.nl?Transaction_TYPE=WorkOrd&whence=&siaT=1785366023704&siaWhc=%2Fapp%2Fcenter%2Fcard.nl&siaNv=ps&siaPs=0&siaPfx=&siaQ=work+orders" target="_blank">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z"/></svg> Work Orders
-            </a>
-        </div>
-
-        <hr>
-
-        <div class="section-title">Reports</div>
-        <div class="button-grid">
             <a href="https://7003982.app.netsuite.com/app/reporting/reportrunner.nl?cr=321" target="_blank">
                 <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> OH Inventory
             </a>
-            <a href="https://7003982.app.netsuite.com/app/reporting/reportrunner.nl?cr=342" target="_blank">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> Fulfillment Report
-            </a>
-            <a href="https://7003982.app.netsuite.com/app/reporting/reportrunner.nl?cr=333" target="_blank">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> Monthly Builds
-            </a>
-            <a href="https://7003982.app.netsuite.com/app/accounting/transactions/purchordermanager.nl?reminders=T&type=receive" target="_blank">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> Open PO's
-            </a>
             <a href="https://7003982.app.netsuite.com/app/reporting/reportrunner.nl?cr=359&reload=T&whence=&siaT=1780372489425&siaWhc=%2Fapp%2Fcenter%2Fcard.nl&siaPs=2&siaPfx=&siaQ=Negative+in&siaNv=ps" target="_blank">
                 <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> Negative Inventory
-            </a>
-            <a href="https://7003982.app.netsuite.com/app/reporting/reportrunner.nl?cr=385&reload=T&whence=&siaT=1780372515255&siaWhc=%2Fapp%2Freporting%2Freportrunner.nl&siaNv=sc" target="_blank">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> Open Sales Orders
             </a>
             <a href="https://7003982.app.netsuite.com/app/reporting/reportrunner.nl?cr=499&reload=T&whence=&siaT=1791912581245&siaWhc=%2Fapp%2Fcommon%2Fitem%2Fitem.nl&siaPs=0&siaPfx=&siaQ=%25warehouse+manager&siaNv=ps" target="_blank">
                 <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> Warehouse Managers Inventory Snapshot
@@ -614,31 +596,58 @@
 
         <hr>
 
-        <div class="section-title">Resources</div>
+        <div class="section-title">Outbound &middot; Orders &amp; Shipping</div>
         <div class="button-grid">
-            <a href="https://university.pos360.com/app/user-portal/knowledge-base/content/dc877eb6-b5a1-11f0-8ef9-3e10d72740c3" target="_blank">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M18 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg> SOP's
+            <a href="https://7003982.app.netsuite.com/app/accounting/transactions/salesordermanager.nl?reminders=T&type=fulfill" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4z"/></svg> Fulfill Orders
             </a>
-            <a href="https://pos360.lightning.force.com/lightning/r/Dashboard/01ZPY000008nwsf2AA/view" target="_blank">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M3 12h4v8H3v-8zm6-6h4v14H9V6zm6 3h4v11h-4V9z"/></svg> Salesforce Dashboard
+            <a href="https://7003982.app.netsuite.com/app/reporting/reportrunner.nl?cr=385&reload=T&whence=&siaT=1780372515255&siaWhc=%2Fapp%2Freporting%2Freportrunner.nl&siaNv=sc" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> Open Sales Orders
             </a>
-            <a href="https://cogs-tawny.vercel.app" target="_blank">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M3 12h4v8H3v-8zm6-6h4v14H9V6zm6 3h4v11h-4V9z"/></svg> Materials Dashboard
+            <a href="https://7003982.app.netsuite.com/app/reporting/reportrunner.nl?cr=342" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> Fulfillment Report
             </a>
-            <a href="https://production-display.vercel.app/" target="_blank">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M3 3h18v18H3V3zm2 2v14h14V5H5zm2 2h10v2H7V7zm0 4h10v2H7v-2zm0 4h7v2H7v-2z"/></svg> Production Schedule
+            <a href="https://7003982.app.netsuite.com/app/accounting/transactions/transactionlist.nl?Transaction_TYPE=WorkOrd&whence=&siaT=1785366023704&siaWhc=%2Fapp%2Fcenter%2Fcard.nl&siaNv=ps&siaPs=0&siaPfx=&siaQ=work+orders" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z"/></svg> Work Orders
+            </a>
+            <a href="https://7003982.app.netsuite.com/app/reporting/reportrunner.nl?cr=333" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> Monthly Builds
+            </a>
+            <a href="https://ship14.shipstation.com/orders/awaiting-shipment" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4z"/></svg> Create Shipping Label
+            </a>
+            <a href="https://ship14.shipstation.com/shipments/shipped-recent?page=1&pageSize=250" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg> Track Shipments
+            </a>
+            <a href="https://7003982.app.netsuite.com/app/accounting/transactions/rtnauth.nl?whence=&siaT=1781650610065&siaWhc=%2Fapp%2Fcommon%2Fsearch%2Fsearchresults.nl&siaPs=1&siaPfx=&siaQ=Return+Author&siaNv=ps" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg> RMA
+            </a>
+        </div>
+
+        <hr>
+
+        <div class="section-title">Tools &amp; Apps</div>
+        <div class="button-grid">
+            <a href="https://bins-smoky-six.vercel.app/" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg> 360 Register App
             </a>
             <a href="mailto:frontdesk@californiarecycles.com?subject=E-waste%20Pick%20Up%20Request">
                 <svg class="icon" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg> Schedule E-Waste
             </a>
-            <a href="https://deploymentsdashboard.vercel.app" target="_blank">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> Deployments Mainframe
+            <a href="https://vantracker-murex.vercel.app/" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4z"/></svg> Van Movement + Count App
+            </a>
+        </div>
+
+        <hr>
+
+        <div class="section-title">Reference</div>
+        <div class="button-grid">
+            <a href="https://university.pos360.com/app/user-portal/knowledge-base/content/dc877eb6-b5a1-11f0-8ef9-3e10d72740c3" target="_blank">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M18 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg> SOP's
             </a>
             <a href="https://join.slack.com/share/enQtMTEyNjExODg0NTQxNjEtZmViNTkxNjcxNzQ2OWRhMDU2MGVmODdhMzI3NDk1YmRiZDlmYWUyNzFlNTg0OGQzZWNmNzgzYmMzMzQ3Y2VlZA" target="_blank">
                 <svg class="icon" viewBox="0 0 24 24"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zm1.271 0a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zm2.521-10.123a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zm0 1.271a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zm10.122 2.521a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zm-1.268 0a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zm-2.523 10.122a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zm0-1.268a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></svg> #SupplyChain
-            </a>
-            <a href="https://bins-smoky-six.vercel.app/" target="_blank">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg> 360 Register App
             </a>
         </div>
 
