@@ -149,28 +149,30 @@
             backdrop-filter: blur(14px);
         }
 
-        .bar-status {
+        .bar-logo {
             display: flex;
             align-items: center;
-            gap: 9px;
-            min-width: 140px;
+            min-width: 180px;
         }
 
         .bar-title {
             flex: 1;
             text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text);
+            white-space: nowrap;
         }
 
-        .bar-clock {
-            font-size: 12px;
-            letter-spacing: 0.01em;
-            color: var(--muted);
-            text-align: right;
-            min-width: 140px;
-            font-variant-numeric: tabular-nums;
+        .bar-status {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 9px;
+            min-width: 180px;
         }
-        .bar-clock .clock-date { color: var(--text); font-weight: 500; }
-        .bar-clock .clock-sep { color: var(--dim); margin: 0 7px; }
 
         .status-dot {
             width: 7px; height: 7px;
@@ -475,11 +477,10 @@
 
         @media (max-width: 700px) {
             #topBar { padding: 0 14px; }
-            .bar-status { min-width: 40px; }
+            .bar-logo { min-width: 0; }
+            .bar-status { min-width: 0; }
             .bar-status .status-text { display: none; }
-            .bar-clock { min-width: 70px; font-size: 10px; }
-            .bar-clock .clock-date { display: none; }
-            .bar-clock .clock-sep { display: none; }
+            .bar-title { font-size: 10px; letter-spacing: 0.08em; white-space: normal; }
             .widget { padding: 20px 16px 26px; }
             .button-grid { grid-template-columns: 1fr 1fr; }
             .widget a { height: 50px; font-size: 12.5px; }
@@ -516,12 +517,12 @@
 <!-- ── MAIN APP ── -->
 <div id="mainApp">
     <div id="topBar">
+        <div class="bar-logo"><img src="https://i.ibb.co/DHShY5Gt/POS360-Logo-horizontal-Dark-BG-2.png" alt="POS360" style="height:30px;width:auto;"></div>
+        <div class="bar-title">Supply Chain Operations - Launchpad</div>
         <div class="bar-status">
             <div class="status-dot"></div>
             <div class="status-text">Synced</div>
         </div>
-        <div class="bar-title"><img src="https://i.ibb.co/DHShY5Gt/POS360-Logo-horizontal-Dark-BG-2.png" alt="POS360" style="height:32px;width:auto;"></div>
-        <div class="bar-clock" id="liveClock"></div>
     </div>
 
     <div class="widget">
@@ -759,17 +760,6 @@
         revealTiles();
     }
 
-
-    // ── LIVE CLOCK ──
-    function updateClock() {
-        const now = new Date();
-        const date = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-        const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        const el = document.getElementById('liveClock');
-        if (el) el.innerHTML = `<span class="clock-date">${date}</span><span class="clock-sep">·</span>${time}`;
-    }
-    updateClock();
-    setInterval(updateClock, 1000);
 
     // ── REVEAL TILES ──
     function revealTiles() {
